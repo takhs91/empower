@@ -6,14 +6,43 @@ project providing a WiFi datapath implementation, a reference Controller and a
 Python-based SDK. On the NFV side, EmPOWER provides a control plane for 
 composing and deploying VNF based on the Click Modular Router.
 
+Terminology
+-----------
+
+An EmPOWER managed network is composed of:
+
+- One Controller. This must be reachable by the other network elements. The 
+controller will run your applications
+
+- One or more Wireless Termination Points or WTPs. WTPs are the actual point
+of radio attachment for WiFi client, i.e. they are essentially WiFi Access 
+Points implementing a split-mac architecture using the EmPOWER WiFi data-path.
+
+- One or more Click Packet Processor or CPPs. CPPs are general purpose 
+computers typically equipped with multiple Ethernet interfaces. They combine
+the switching capabilities of an OpenFlow switch with the processing 
+capabiities of a server.
+
 
 Requirements
 -----------
-- one server-class machine running a recent Linux distribution (I'm currently 
+
+For the controller:
+
+- One server-class machine running a recent Linux distribution (I'm currently 
 using Fedora 22 and Debian Wheezy). 
-- one or more WiFi Access Points capable of running OpenWRT Barrier Breaker 
+
+For the WTPs:
+
+- One or more WiFi Access Points capable of running OpenWRT Barrier Breaker 
 (14.07) with at least one Atheros-based Wireless NIC supported by the ath9k 
-driver.
+driver (I'm currently using PCEngines ALIX 2D boards).
+
+For the CPPs:
+
+- One or more embedded PC running a recent linux distribution and supporting
+OpenVSwitch with at least two Ethernet ports (I'm currently using Soekris 
+6501-70 with 12 Gigabit Ethernet Ports).
 
 Building EmPOWER from sources
 ---------------------
@@ -198,6 +227,10 @@ INFO:core:Registering 'empower.counters.packets_counter'
 INFO:core:Registering 'empower.counters.bytes_counter'
 ```
 
+If some Python package is missing you should install it using either the 
+Python package managed (pip) or your distirbution package mananager. Make sure
+to install the Python3 version of the dependencies.
+
 The controller web interface can be reached at the following URL:
 
 ```
@@ -242,29 +275,26 @@ INFO:lvapp.lvappserver:Received caps response from 04:F0:21:09:F9:93
 Creating your first Slice
 -------------------------
 
-The SD WLAN Controller can run multiple virtual networks, or Pools, on top of 
-the same physical infrastructure. A Pool is a virtual network with its own set 
-of WTPs. Network Apps run on top of the SD WLAN Controller in their own Pool 
-and exploit the programming primitives through either a REST API or a native 
-Python API.
+The Controller can run multiple virtual networks on top of the same physical 
+infrastructure. A virtual network has own set of WTPs/CPPs.
 
-Pools are requested by regular users and must be apporved by a network 
-administrator. You can request your first slice using the controller web 
-interface by logging with one of the default user account (e.g. foo).
+Virtual Networks are requested by regular users and must be approved by a 
+network administrator. You can request your first slice using the controller 
+web interface by logging with one of the default user account (e.g. foo).
 
-After logging you will be presented with the list of your Pools (which should
-be empty). Click on the "+" icon and then specify a name (this will be your
-WLAN SSID), an optional short description, and select at least one of the WTPs
-in the list. The click on the button "Request pool".
+After logging you will be presented with the list of your Virtual Networks 
+(which should be empty). Click on the "+" icon and then specify a name (this 
+will be your WLAN SSID), an optional short description, and select at least one 
+of the WTPs in the list. The click on the button "Request Virtual Network".
 
 You should now logout from the web interface and login again as administrator.
 Click on the "Request" tab and approve the request.
 
-Finally, the opensource version of EmPOWER does not support WPA authentication,
+Finally, the open source version of EmPOWER does not support WPA authentication,
 so you must specify the list of MAC address that can connect to any of the 
-Pool defined in the controller (by default anybody can associate). In order to
-do so click on the "ACL" tab and specify the clients MAC addresses that are 
-allowed and/or denied to use the network.
+Virtual Networks defined in the controller (by default anybody can associate). 
+In order to do so click on the "ACL" tab and specify the clients MAC addresses 
+that are allowed and/or denied to use the network.
 
 At this point any of the clients that are authorized to use the network should
 see the new SSID and should be able to associate to it and to reach the public
