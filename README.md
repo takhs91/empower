@@ -190,13 +190,13 @@ reached from all wireless APs. From the main repository enter the controller
 directory:
 
 ```
-  $: cd empower-controller
+  $: cd empower-runtime
 ```
 
 and start the controller:
 
 ```
-  $: ./empower.py
+  $: ./empower-runtime.py
 ```
 
 If all the python dependencies are satisfied you should see an output like
