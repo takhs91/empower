@@ -23,6 +23,10 @@ computers typically equipped with multiple Ethernet interfaces. They combine
 the switching capabilities of an OpenFlow switch with the processing 
 capabiities of a server.
 
+Note: If you want to run EmPOWER as a WLAN Controller you do not need CPPs: 
+just connection all WTPs to your network and make sure they have IP 
+connectivity to the controller. Converselly if you want to us EmPOWER as a NFV 
+orchestrator you do not need WTPs.
 
 Requirements
 -----------
