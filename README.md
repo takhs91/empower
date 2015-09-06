@@ -47,10 +47,10 @@ OpenVSwitch with at least two Ethernet ports (I'm currently using Soekris
 6501-70 boards with 12 Gigabit Ethernet Ports).
 
 
-Building a WTP image from sources
+Building a WTP from sources
 ---------------------
 
-Clone the EmPOWER repository and pull the submodules:
+Clone the EmPOWER repository and pull all the submodules:
 
 ```
   $: git clone http://github.com/rriggio/empower
@@ -59,7 +59,8 @@ Clone the EmPOWER repository and pull the submodules:
   $: git submodule update
 ```
 
-Change to the "empower-openwrt" directory and update and install all feeds:
+Change to the "empower-openwrt" directory, update, and install all feeds:
+
 
 ```
   $: cd empower-openwrt
@@ -67,14 +68,13 @@ Change to the "empower-openwrt" directory and update and install all feeds:
   $: ./scripts/feeds install -a
 ```
 
-EmPOWER Access Points need to connect to the controller for all their 
+EmPOWER Access Points need to be connected to the controller for all their 
 operations. However, the default configuration does not specify the address
 of the controller. In order to avoid having to configure manually all access
 points, you can automatically create an image with the configuration that
-suits your needs. NOTE: the following configuration is for a PCEngines ALIX 2D
-board equipped with a single Wireless NIC.
-
-In order to do so, create a directory named "files":
+suits your needs (note, the following configuration is for a PCEngines ALIX 2D
+board equipped with a single Wireless NIC). In order to do so, create a 
+directory named "files":
 
 ```
   $: mkdir files
@@ -186,7 +186,7 @@ Building a CPP
 ---------------------
 
 The following instructions will guide you trough the process of configuring
-a generic Linux machine as a CPP. The instructions tested on Ubuntu 15.04
+a generic Linux machine as a CPP. The instructions are tested on Ubuntu 15.04
 server. First update the package repository and install some dependecies:
 
 ```
@@ -195,7 +195,7 @@ sudo apt-get upgrade
 sudo apt-get install build-essential openvswitch-switch python3-websocket
 ```
 
-Thenclone the empower-agent git repository
+Then clone the empower-agent git repository
 
 ```
 git clone https://github.com/rriggio/empower-agent.git
@@ -218,9 +218,8 @@ sudo vi /etc/network/interfaces
 ```
 
 and replace all its content with what follows. Note the this configurationi is
-meant for one CPP equipped with 4 Ethernet interfaces. Note that the first 
-interface used as management interface and requires an active DHCP server 
-(adjust according to you deployment). 
+meant for one CPP equipped with 4 Ethernet interfaces and that the first 
+interface is used as management interface and requires an active DHCP server.
 
 ```
 # This file describes the network interfaces available on your system
@@ -285,32 +284,57 @@ If all the python dependencies are satisfied you should see an output like
 this:
 
 ```
-INFO:root:Importing module: empower.maps.ncqm
-INFO:root:Importing module: empower.triggers.summary
-INFO:root:Importing module: empower.maps.ucqm
-INFO:root:Importing module: empower.events.wtp_up
-INFO:root:Importing module: empower.counters.bytes_counter
-INFO:root:Importing module: empower.triggers.rssi
-INFO:root:Importing module: empower.counters.packets_counter
-INFO:root:Importing module: empower.events.wtp_down
-INFO:root:Importing module: empower.events.lvap_join
-INFO:root:Importing module: empower.link_stats.link_stats
-INFO:core:Registering 'empower.lvapp.lvappserver'
-INFO:lvapp.lvappserver:EmPOWER LVAPP Server available at 4433
-INFO:core:Registering 'empower.web.restserver'
-INFO:web.restserver:EmPOWER LVAPP Server available at 8888
-INFO:core:Registering 'empower.energino.energinoserver'
-INFO:energino.energinoserver:EmPOWER Energino Server available at 5533
-INFO:core:Registering 'empower.maps.ucqm'
-INFO:core:Registering 'empower.maps.ncqm'
-INFO:core:Registering 'empower.link_stats.link_stats'
-INFO:core:Registering 'empower.triggers.summary'
-INFO:core:Registering 'empower.triggers.rssi'
-INFO:core:Registering 'empower.events.wtp_up'
-INFO:core:Registering 'empower.events.wtp_down'
-INFO:core:Registering 'empower.events.lvap_join'
-INFO:core:Registering 'empower.counters.packets_counter'
-INFO:core:Registering 'empower.counters.bytes_counter'
+INFO:core:Starting EmPOWER Runtime
+INFO:core:Generating default accounts
+INFO:core:Loading EmPOWER Runtime defaults
+INFO:root:Importing module: empower.core.restserver
+INFO:root:Importing module: empower.scylla.lvnfp.lvnfpserver
+INFO:root:Importing module: empower.charybdis.lvapp.lvappserver
+INFO:root:Importing module: empower.core.energinoserver
+INFO:root:Importing module: empower.charybdis.link_stats.link_stats
+INFO:root:Importing module: empower.charybdis.events.wtpdown
+INFO:root:Importing module: empower.charybdis.events.wtpup
+INFO:root:Importing module: empower.charybdis.events.lvapleave
+INFO:root:Importing module: empower.charybdis.events.lvapjoin
+INFO:root:Importing module: empower.charybdis.counters.packets_counter
+INFO:root:Importing module: empower.charybdis.counters.bytes_counter
+INFO:root:Importing module: empower.charybdis.maps.ucqm
+INFO:root:Importing module: empower.charybdis.maps.ncqm
+INFO:root:Importing module: empower.charybdis.triggers.rssi
+INFO:root:Importing module: empower.charybdis.triggers.summary
+INFO:root:Importing module: empower.scylla.events.cppdown
+INFO:root:Importing module: empower.scylla.events.cppup
+INFO:root:Importing module: empower.scylla.events.lvnfjoin
+INFO:root:Importing module: empower.scylla.events.lvnfleave
+INFO:root:Importing module: empower.scylla.handlers.read_handler
+INFO:root:Importing module: empower.scylla.handlers.write_handler
+INFO:root:Importing module: empower.scylla.stats.lvnf_stats
+INFO:core:Registering 'empower.core.restserver'
+INFO:core.restserver:REST Server available at 8888
+INFO:core:Registering 'empower.scylla.lvnfp.lvnfpserver'
+INFO:scylla.lvnfp.lvnfpserver:LVNF Server available at 4422
+INFO:core:Registering 'empower.charybdis.lvapp.lvappserver'
+INFO:charybdis.lvapp.lvappserver:LVAP Server available at 4433
+INFO:core:Registering 'empower.core.energinoserver'
+INFO:core.energinoserver:Energino Server available at 5533
+INFO:core:Registering 'empower.charybdis.link_stats.link_stats'
+INFO:core:Registering 'empower.charybdis.events.wtpdown'
+INFO:core:Registering 'empower.charybdis.events.wtpup'
+INFO:core:Registering 'empower.charybdis.events.lvapleave'
+INFO:core:Registering 'empower.charybdis.events.lvapjoin'
+INFO:core:Registering 'empower.charybdis.counters.packets_counter'
+INFO:core:Registering 'empower.charybdis.counters.bytes_counter'
+INFO:core:Registering 'empower.charybdis.maps.ucqm'
+INFO:core:Registering 'empower.charybdis.maps.ncqm'
+INFO:core:Registering 'empower.charybdis.triggers.rssi'
+INFO:core:Registering 'empower.charybdis.triggers.summary'
+INFO:core:Registering 'empower.scylla.events.cppdown'
+INFO:core:Registering 'empower.scylla.events.cppup'
+INFO:core:Registering 'empower.scylla.events.lvnfjoin'
+INFO:core:Registering 'empower.scylla.events.lvnfleave'
+INFO:core:Registering 'empower.scylla.handlers.read_handler'
+INFO:core:Registering 'empower.scylla.handlers.write_handler'
+INFO:core:Registering 'empower.scylla.stats.lvnf_stats'
 ```
 
 If some Python package is missing you should install it using either the 
@@ -344,11 +368,11 @@ Points and, in the EmPOWER terminology, is the equivalent to a Wireless AP).
 You must then specify the MAC addresses of the WTPs that are authorized to
 connect to this controller. You can find the MAC address by logging into the
 WTPs using ssh and by using the ifconfig command. The EmPOWER platform uses
-the MAC address of the first wireless interface (typically moni0). Add all your
-WTPs using this procedure.
+the MAC address of the OpenVSwitch bridge (br-ovs) as unique identified for
+wach WTP. Add all your WTPs using this procedure.
 
-After all WTPs have been added and if the controller is reachable by the WTPs on 
-the ip address specified in the "etc/config/empower" then you should see an 
+After all WTPs have been added and if the controller is reachable by the WTPs 
+on the ip address specified in the "etc/config/empower" then you should see an 
 output like this in the controller terminal:
 
 ```
@@ -370,11 +394,16 @@ web interface by logging with one of the default user account (e.g. foo).
 
 After logging you will be presented with the list of your Virtual Networks 
 (which should be empty). Click on the "+" icon and then specify a name (this 
-will be your WLAN SSID), an optional short description, and select at least one 
-of the WTPs in the list. The click on the button "Request Virtual Network".
+will be your WLAN SSID), an optional short description. Then click on the 
+button "Request Virtual Network".
 
 You should now logout from the web interface and login again as administrator.
 Click on the "Request" tab and approve the request.
+
+You can now login again as regular user. Your new virtual network should be 
+listed in the "Tenants" tab. Click on the virtual network id and you will
+be redirected to the Virtual Network management page. Here from the WTP tab
+you can add the WTPs to youe virtual network.
 
 Finally, the open source version of EmPOWER does not support WPA authentication,
 so you must specify the list of MAC address that can connect to any of the 
@@ -386,7 +415,4 @@ At this point any of the clients that are authorized to use the network should
 see the new SSID and should be able to associate to it and to reach the public
 Internet (if the wireless APs have a backhaul that is connected to the 
 Internet).
-
-Please refer to the wiki for the REST and Python API documentation and in 
-general for the documentation on how to develop applications.
 
