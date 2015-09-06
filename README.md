@@ -268,7 +268,14 @@ directory:
   $: cd empower-runtime
 ```
 
+create a directory for the database named deploy:
+
+```
+  $: mkdir deploy
+```
+
 and start the controller:
+
 
 ```
   $: ./empower-runtime.py
