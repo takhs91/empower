@@ -3,16 +3,15 @@ EmPOWER
 
 EmPOWER is a SDN/NFV framework fo Enterprise WLANs. EmPOWER is an open source
 project providing a WiFi datapath implementation, a reference Controller and a
-Python-based SDK. On the NFV side, EmPOWER provides a control plane for 
-composing and deploying VNF based on the Click Modular Router.
+Python-based SDK. 
 
 Terminology
 -----------
 
-An EmPOWER managed network is composed of:
+An EmPOWER network is composed of:
 
 - One Controller. This must be reachable by the other network elements. The 
-controller will run your applications
+controller will run your applications.
 
 - One or more Wireless Termination Points or WTPs. WTPs are the actual point
 of radio attachment for WiFi client, i.e. they are essentially WiFi Access 
@@ -21,12 +20,11 @@ Points implementing a split-mac architecture using the EmPOWER WiFi data-path.
 - One or more Click Packet Processor or CPPs. CPPs are general purpose 
 computers typically equipped with multiple Ethernet interfaces. They combine
 the switching capabilities of an OpenFlow switch with the processing 
-capabiities of a server.
+capabilities of a server.
 
-Note: If you want to run EmPOWER as a WLAN Controller you do not need CPPs: 
-just connection all WTPs to your network and make sure they have IP 
-connectivity to the controller. Converselly if you want to us EmPOWER as a NFV 
-orchestrator you do not need WTPs.
+Note: If you want to run EmPOWER as a WLAN Controller you do not need CPPs. 
+Converselly if you want to us EmPOWER as a NFV orchestrator you do not need 
+WTPs.
 
 Requirements
 -----------
@@ -46,9 +44,10 @@ For the CPPs:
 
 - One or more embedded PC running a recent linux distribution and supporting
 OpenVSwitch with at least two Ethernet ports (I'm currently using Soekris 
-6501-70 with 12 Gigabit Ethernet Ports).
+6501-70 boards with 12 Gigabit Ethernet Ports).
 
-Building EmPOWER from sources
+
+Building a WTP image from sources
 ---------------------
 
 Clone the EmPOWER repository and pull the submodules:
@@ -181,6 +180,82 @@ card in a compact flash reader attached to your laptop and then run:
 ```
 
 Note this assumes that the compact flash device is "/dev/sdb"
+
+
+Building a CPP
+---------------------
+
+The following instructions will guide you trough the process of configuring
+a generic Linux machine as a CPP. The instructions tested on Ubuntu 15.04
+server. First update the package repository and install some dependecies:
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential openvswitch-switch python3-websocket
+```
+
+Thenclone the empower-agent git repository
+
+```
+git clone https://github.com/rriggio/empower-agent.git
+```
+
+Compile and install click
+
+```
+cd empower-agent
+./configure --disable-linuxmodule --enable-userlevel --enable-wifi --enable-empower --enable-lvnfs
+make 
+sudo make install
+```
+
+You now need to configure the system to use OpenVSwitch. Open the network
+configuration file with
+
+```
+sudo vi /etc/network/interfaces 
+```
+
+and replace all its content with what follows. Note the this configurationi is
+meant for one CPP equipped with 4 Ethernet interfaces. Note that the first 
+interface used as management interface and requires an active DHCP server 
+(adjust according to you deployment). 
+
+```
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet dhcp
+
+auto allow-ovs br0
+iface br0 inet manual
+    ovs_type OVSBridge
+    ovs_ports eth1 eth2 eth3
+
+allow-br0 eth1
+iface eth1 inet manual
+    ovs_bridge br0
+    ovs_type OVSPort
+
+allow-br0 eth2
+iface eth2 inet manual
+    ovs_bridge br0
+    ovs_type OVSPort
+
+allow-br0 eth3
+iface eth3 inet manual
+    ovs_bridge br0
+    ovs_type OVSPort
+```
 
 Running EmPOWER
 ---------------
